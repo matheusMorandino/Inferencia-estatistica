@@ -1,14 +1,15 @@
-dados = read.csv(file.choose(), header = T, sep = ",")
+#dados = read.csv(file.choose(), header = T, sep = ",")
+#install.packages("Ecdat", repos="http://R-Forge.R-project.org")
+#library(Ecdat)
+data(Icecream)
 
 #Teste para distribuição normal
-CDF_sample = ecdf(dados$Latitude)
-mean_sample = mean(dados$Latitude)
-variance_sample = var(dados$Latitude)
+CDF_sample = ecdf(Icecream$temp)
+mean_sample = mean(Icecream$temp)
+variance_sample = sd(Icecream$temp)
 
-summary(dados$Latitude)
-
-model_norm = rnorm(length(dados$Latitude), mean_sample, variance_sample)
+model_norm = rnorm(length(Icecream$temp), mean_sample, variance_sample)
 CDF_norm = ecdf(model_norm)
 
-plot(CDF_sample, col="red")
-plot(CDF_norm, col="green") 
+plot(CDF_norm, col="black") 
+plot(CDF_sample, col="blue", add=TRUE)
