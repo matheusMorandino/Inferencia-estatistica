@@ -28,12 +28,12 @@ CDF_exponencialDistribution = ecdf(model_exponencialDistribution)
 plot(CDF_exponencialDistribution, col="red", add=TRUE)
 
 #Poisson distribution test
-model_poisson_distribution=rpois(length(dados$Latitude), sd_sample^2)
+model_poisson_distribution=rpois(length(dados$Latitude), mean_sample)
 CDF_poisson_distribution=ecdf(model_poisson_distribution)
 plot(CDF_poisson_distribution, col="yellow", add=TRUE)
 
 #Binomial distribution test
-model_binomial_distribution=rbinom(dados$Latitude, size = length(dados$Latitude),prob = mean_sample/length(dados$Latitude))
+model_binomial_distribution=rbinom(dados$Latitude, size = length(dados$Latitude), prob = mean_sample/length(dados$Latitude))
 CDF_binomial_distribution=ecdf(model_binomial_distribution)
 plot(CDF_binomial_distribution, col="brown", add=TRUE)
 
@@ -47,8 +47,20 @@ model_gamma_distribution=rgamma(length(dados$Latitude), shape = 1, rate = 1)
 CDF_gamma_distribution=ecdf(model_gamma_distribution)
 plot(CDF_gamma_distribution, col="purple", add=TRUE)
 
+#Geometric distribution test
+model_geometric=rgeom(length(dados$Latitude), 1/mean_sample)
+CDF_geometric=ecdf(model_geometric)
+plot(CDF_geometric, col="grey", add=TRUE)
+
 #Power law distribution test
-model_power_law = rpldis(length(dados$Latitude), mean_sample, mean_sample, 0)
+ln_sum = 0
+for(i in 1:length(dados$Latitude)) {
+  ln_sum = log(abs(dados$Latitude[i]), exp(1)) + ln_sum
+}
+alpha = 1 + 2*length(dados$Latitude)/(ln_sum)
+model_power_law = rpldis(length(dados$Latitude), 1, alpha, 0)
 CDF_power_law = ecdf(model_power_law)
-plot(CDF_power_law)
-plot(model_power_law)
+plot(CDF_power_law, col="orange", add=TRUE)
+
+#Hypergeometric distribution test
+model_hyper=rhyper(length(dados$Latitude), )
