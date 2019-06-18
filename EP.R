@@ -1,66 +1,81 @@
 dados = read.csv(file.choose(), header = T, sep = ",")
-CDF_sample = ecdf(dados$Latitude)
-mean_sample = mean(dados$Latitude)
-sd_sample = sd(dados$Latitude)
+
+#Sample data colection
+CDF_sample = ecdf(dados$y)
+mean_sample = mean(dados$y)
+sd_sample = sd(dados$y)
+minimum = min(dados$y)
+maximum = max(dados$y)
 print(summary(dados))
 plot(CDF_sample, col="black")
 
-#Normal distribution test
-model_norm = rnorm(length(dados$Latitude), mean_sample, sd_sample)
+#Kullback-leibler function
+KL_test = function(px, py, base) {
+  sum = 0
+  for(i in minimum:maximum) {
+    sum = px(i)*log(px(i)/py(i), base) + sum
+  }
+  return(sum);
+}
+
+#Normal distribution model
+model_norm = rnorm(length(dados$y), mean_sample, sd_sample)
 CDF_norm = ecdf(model_norm)
 plot(CDF_norm, col="blue", add=TRUE) 
 
-#LogNormal distribution test
-LogNormal = rlnorm(length(dados$Latitude), mean_sample, sd_sample)
+#LogNormal distribution model
+LogNormal = rlnorm(length(dados$y), mean_sample, sd_sample)
 CDF_LogNormal = ecdf(LogNormal)
 plot(CDF_LogNormal, col="pink", add=TRUE)
 
-#Uniform distribution test
-minimum = min(dados$Latitude)
-maximum = max(dados$Latitude)
-model_uniformDistribution = runif(length(dados$Latitude), minimum, maximum)
+#Uniform distribution model
+model_uniformDistribution = runif(length(dados$y), minimum, maximum)
 CDF_uniformDistribution = ecdf(model_uniformDistribution)
 plot(CDF_uniformDistribution, col="green", add=TRUE)
 
-#Exponencial distribution test
-model_exponencialDistribution=rexp(length(dados$Latitude), sd_sample)
+#Exponencial distribution model
+model_exponencialDistribution=rexp(length(dados$y), sd_sample)
 CDF_exponencialDistribution = ecdf(model_exponencialDistribution)
 plot(CDF_exponencialDistribution, col="red", add=TRUE)
 
-#Poisson distribution test
-model_poisson_distribution=rpois(length(dados$Latitude), mean_sample)
+#Poisson distribution model
+model_poisson_distribution=rpois(length(dados$y), mean_sample)
 CDF_poisson_distribution=ecdf(model_poisson_distribution)
 plot(CDF_poisson_distribution, col="yellow", add=TRUE)
 
-#Binomial distribution test
-model_binomial_distribution=rbinom(dados$Latitude, size = length(dados$Latitude), prob = mean_sample/length(dados$Latitude))
+#Binomial distribution model
+model_binomial_distribution=rbinom(dados$y, size = length(dados$y), prob = mean_sample/length(dados$y))
 CDF_binomial_distribution=ecdf(model_binomial_distribution)
 plot(CDF_binomial_distribution, col="brown", add=TRUE)
 
-#Weibull distribution test
-model_weibull_distribution=rweibull(length(dados$Latitude), shape = 1, scale = 1)
+#Weibull distribution model
+model_weibull_distribution=rweibull(length(dados$y), shape = 1, scale = mean_sample/log(2,exp(1)))
 CDF_weibull=ecdf(model_weibull_distribution)
 plot(CDF_weibull, col= "orange", add=TRUE)
 
-#Gamma distribution test
-model_gamma_distribution=rgamma(length(dados$Latitude), shape = 1, rate = 1)
+#Gamma distribution model
+model_gamma_distribution=rgamma(length(dados$y), shape = (mean_sample^2)/(sd_sample^2), rate = mean_sample/(sd_sample^2))
 CDF_gamma_distribution=ecdf(model_gamma_distribution)
 plot(CDF_gamma_distribution, col="purple", add=TRUE)
 
-#Geometric distribution test
-model_geometric=rgeom(length(dados$Latitude), 1/mean_sample)
+#Geometric distribution model
+model_geometric=rgeom(length(dados$y), 1/mean_sample)
 CDF_geometric=ecdf(model_geometric)
 plot(CDF_geometric, col="grey", add=TRUE)
 
-#Power law distribution test
+#Power law distribution model
 ln_sum = 0
-for(i in 1:length(dados$Latitude)) {
-  ln_sum = log(abs(dados$Latitude[i]), exp(1)) + ln_sum
-}
-alpha = 1 + 2*length(dados$Latitude)/(ln_sum)
-model_power_law = rpldis(length(dados$Latitude), 1, alpha, 0)
-CDF_power_law = ecdf(model_power_law)
-plot(CDF_power_law, col="orange", add=TRUE)
+x_min = 1
 
-#Hypergeometric distribution test
-model_hyper=rhyper(length(dados$Latitude), )
+for(i in 1:length(dados$y)) {
+  ln_sum = log(abs(dados$y[i])/(x_min-1/2), exp(1)) + ln_sum
+}
+alpha = 1 + length(dados$y)/(ln_sum)
+
+model_power_law = rpldis(length(dados$y), x_min, alpha, 0)
+CDF_power_law = ecdf(model_power_law)
+plot(CDF_power_law, col="cyan", add=TRUE)
+
+#Hypergeometric distribution model
+model_hyper=rhyper(length(dados$y), )
+
