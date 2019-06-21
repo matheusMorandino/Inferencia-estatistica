@@ -138,7 +138,7 @@ test_gamma = function(px) {
   sample_CDF = ecdf(px)
   KS_coef =  0
   for(i in 1:1000) {
-    model_gamma=rgamma(length(dados$y), shape = (mean_sample^2)/(sd_sample^2), rate = mean_sample/(sd_sample^2))
+    model_gamma_distribution=rgamma(length(dados$y), shape = (mean_sample^2)/(sd_sample^2), rate = mean_sample/(sd_sample^2))
     model_CDF=ecdf(model_gamma_distribution)
     if(KS_test(sample_CDF,model_CDF) == TRUE) {
       KS_coef = KS_coef + 1
@@ -163,8 +163,9 @@ test_geometric = function(px) {
   }
   KS_coef = KS_coef/1000
   
-  return(KS_coef)
+  return(as.double(KS_coef))
 }
+
 
 #Power law distribution model
 test_power_law = function(px) {
@@ -190,18 +191,19 @@ test_power_law = function(px) {
 }
   #Hypergeometric distribution model
   
-  insertion_sort=function(array){
-    for(i in 2:length(array))
-      aux=array[i]
-      j=i-1
-      while(j>0 && aux<array[j])
-        array[j+1]=array[j]
-        j=j-1
-      array[j+1]=aux
-    return(array)
-  }
+  #insertion_sort=function(array){
+   # for(i in 2:length(array))
+    #  aux=array[i]
+    #  j=i-1
+     # while(j>0 && aux<array[j])
+      #  array[j+1]=array[j]
+       # j=j-1
+    #  array[j+1]=aux
+    #return(array)
+  #}
    
-  
+  a=c(0.1, 0.2)
+  print(a)
   normal=test_normal(dados$y)
   log_normal=test_LogNormal(dados$y)
   uniform=test_uniform(dados$y)
@@ -211,23 +213,38 @@ test_power_law = function(px) {
   weibull=test_weibull(dados$y)
   gamma=test_gamma(dados$y)
   geometric=test_geometric(dados$y)
-  power_law=test_power_law(dados$y)
+  #power_law=test_power_law(dados$y)
   
-  array=c(normal, log_normal, uniform, exponencial, poisson, binomial, weibull, gamma, geometric,power_law)
+  array=c(normal, log_normal, uniform, exponencial, poisson, binomial, weibull, gamma, geometric)#power law
   sorted_array=insertion_sort(array)
   print(array)
-  print(sorted_array)
-    
-  insertion_sort()
-  #tests
-  find_best_distribution = function(px) {
-    tests <- ()
-    max_KS_coef = 0
-    for(i in 1:11){
-      if(max_KS_coef < )
-        max_KS_coef = 
-    }
-  }
+  print(a)
+  print("Normal: %d", array[1] + "% de chance")
+  print("Lognormal: " + array[2] + "% de chance")
+  print("Uniforme: "+ array[3] + "% de chance")
+  print("Exponencial: " + array[4] + "% de chance")
+  print("Poisson: " + array[5] + "% de chance")
+  print("Binomial: " + array[6] + "% de chance")
+  print("Weibull: " + array[7] + "% de chance")
+  print("Gamma: " + array[8] + "% de chance")
+  print("Geometrica: " + array[9] + "% de chance")
+  print("Power law: " + array[10] + "% de chance")
   
-}
+  
+  #for(i in 1:length(sorted_array)){
+   # print()
+  #}   
+  #insertion_sort()
+  #tests
+  #find_best_distribution = function(px) {
+    
+    #tests <- ()
+   # max_KS_coef = 0
+    #for(i in 1:11){
+     # if(max_KS_coef < )
+      #  max_KS_coef = 
+    #}
+  #}
+  
+#}
 
