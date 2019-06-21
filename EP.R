@@ -25,7 +25,7 @@ test_normal = function(px) {
   sample_CDF = ecdf(px)
   KS_coef =  0
   for(i in 1:100) {
-    model_norm = rnorm(length(dados$y), mean_sample, sd_sample)
+    model_norm = rnorm(length(dados$y), mean_sample, sd_sample) 
     model_CDF = ecdf(model_norm)
     if(KS_test(sample_CDF,model_CDF) == TRUE) {
       KS_coef = KS_coef + 1
@@ -37,24 +37,69 @@ test_normal = function(px) {
 }
 
 #LogNormal distribution model
-LogNormal = rlnorm(length(dados$y), mean_sample, sd_sample)
-CDF_LogNormal = ecdf(LogNormal)
-plot(CDF_LogNormal, col="pink", add=TRUE)
+test_LogNormal = function(px) {
+  sample_CDF = ecdf(px)
+  KS_coef =  0
+  for(i in 1:100) {
+    LogNormal = rlnorm(length(dados$y), mean_sample, sd_sample)
+    model_CDF = ecdf(LogNormal)
+    if(KS_test(sample_CDF,model_CDF) == TRUE) {
+      KS_coef = KS_coef + 1
+    }
+  }
+  KS_coef = KS_coef/1000
+  
+  return(KS_coef)
+}
+
 
 #Uniform distribution model
-model_uniformDistribution = runif(length(dados$y), minimum, maximum)
-CDF_uniformDistribution = ecdf(model_uniformDistribution)
-plot(CDF_uniformDistribution, col="green", add=TRUE)
+test_uniform = function(px) {
+  sample_CDF = ecdf(px)
+  KS_coef =  0
+  for(i in 1:100) {
+    model_uniformDistribution = runif(length(dados$y), minimum, maximum)
+    model_CDF = ecdf(model_uniformDistribution)
+    if(KS_test(sample_CDF,model_CDF) == TRUE) {
+      KS_coef = KS_coef + 1
+    }
+  }
+  KS_coef = KS_coef/1000
+  
+  return(KS_coef)
+}
 
 #Exponencial distribution model
-model_exponencialDistribution=rexp(length(dados$y), sd_sample)
-CDF_exponencialDistribution = ecdf(model_exponencialDistribution)
-plot(CDF_exponencialDistribution, col="red", add=TRUE)
+test_exp = function(px) {
+  sample_CDF = ecdf(px)
+  KS_coef =  0
+  for(i in 1:100) {
+    model_exponencialDistribution=rexp(length(dados$y), sd_sample) ## alterem essa parte de acordo
+    model_CDF = ecdf(model_exponencialDistribution)                ## com a distribuição, é só subistituir com o que fizemos
+    if(KS_test(sample_CDF,model_CDF) == TRUE) {
+      KS_coef = KS_coef + 1
+    }
+  }
+  KS_coef = KS_coef/1000
+  
+  return(KS_coef)
+}
 
 #Poisson distribution model
-model_poisson_distribution=rpois(length(dados$y), mean_sample)
-CDF_poisson_distribution=ecdf(model_poisson_distribution)
-plot(CDF_poisson_distribution, col="yellow", add=TRUE)
+test_poisson = function(px) {
+  sample_CDF = ecdf(px)
+  KS_coef =  0
+  for(i in 1:100) {
+    model_poisson_distribution=rpois(length(dados$y), mean_sample)
+    model_CDF=ecdf(model_poisson_distribution)
+    if(KS_test(sample_CDF,model_CDF) == TRUE) {
+      KS_coef = KS_coef + 1
+    }
+  }
+  KS_coef = KS_coef/1000
+  
+  return(KS_coef)
+}
 
 #Binomial distribution model
 model_binomial_distribution=rbinom(dados$y, size = length(dados$y), prob = mean_sample/length(dados$y))
