@@ -1,14 +1,22 @@
 dados = read.csv(file.choose(), header = T, sep = ",")
 
 #Sample data colection
-sample_dados = dados$y
-CDF_sample = ecdf(dados$y)
-mean_sample = mean(dados$y)
-sd_sample = sd(dados$y)
-minimum = min(dados$y)
-maximum = max(dados$y)
+sample_dados = dados[,1]
+CDF_sample = ecdf(dados[,1])
+mean_sample = mean(dados[,1])
+sd_sample = sd(dados[,1])
+minimum = min(dados[,1])
+maximum = max(dados[,1])
 print(summary(dados))
 plot(CDF_sample, col="black")
+
+print(dados[,1])
+for (i in 1:length(dados[,1])){
+  if(is.na(i)) print("Is null")
+  else print("ok")
+}
+
+print(length(dados[,1]))
 
 #Kolmogorov-Smirnov function
 KS_test = function(px, py) {
@@ -22,7 +30,7 @@ KS_test = function(px, py) {
 
 #Normal distribution model
 test_normal = function(px) {
-  sample_CDF = ecdf(px)
+  #sample_CDF = ecdf(px)
   KS_coef =  0
   for(i in 1:1000) {
     model_norm = rnorm(length(px), mean_sample, sd_sample) 
@@ -113,7 +121,7 @@ test_binomial = function(px) {
     }
   }
   KS_coef = KS_coef/1000
-
+  
   return(KS_coef)
 }
 
@@ -157,13 +165,14 @@ test_geometric = function(px) {
   for(i in 1:1000) {
     model_geometric=rgeom(length(px), 1/mean_sample)
     model_CDF=ecdf(model_geometric)
+    plot(model_CDF)
     if(KS_test(sample_CDF,model_CDF) == TRUE) {
       KS_coef = KS_coef + 1
     }
   }
   KS_coef = KS_coef/1000
   
-  return(as.double(KS_coef))
+  return(KS_coef)
 }
 
 
@@ -189,61 +198,29 @@ test_power_law = function(px) {
   KS_coef = KS_coef/1000
   return(KS_coef)
 }
-  #Hypergeometric distribution model
-  
-  #insertion_sort=function(array){
-   # for(i in 2:length(array))
-    #  aux=array[i]
-    #  j=i-1
-     # while(j>0 && aux<array[j])
-      #  array[j+1]=array[j]
-       # j=j-1
-    #  array[j+1]=aux
-    #return(array)
-  #}
-   
-  a=c(0.1, 0.2)
-  print(a)
-  normal=test_normal(dados$y)
-  log_normal=test_LogNormal(dados$y)
-  uniform=test_uniform(dados$y)
-  exponencial=test_exponencial(dados$y)
-  poisson=test_poisson(dados$y)
-  binomial=test_binomial(dados$y)
-  weibull=test_weibull(dados$y)
-  gamma=test_gamma(dados$y)
-  geometric=test_geometric(dados$y)
-  power_law=test_power_law(dados$y)
-  
-  array=c(normal, log_normal, uniform, exponencial, poisson, binomial, weibull, gamma, geometric)#power law
-  sorted_array=insertion_sort(array)
-  print(array)
-  print(a)
-  print("Normal: %d", array[1] + "% de chance")
-  print("Lognormal: " + array[2] + "% de chance")
-  print("Uniforme: "+ array[3] + "% de chance")
-  print("Exponencial: " + array[4] + "% de chance")
-  print("Poisson: " + array[5] + "% de chance")
-  print("Binomial: " + array[6] + "% de chance")
-  print("Weibull: " + array[7] + "% de chance")
-  print("Gamma: " + array[8] + "% de chance")
-  print("Geometrica: " + array[9] + "% de chance")
-  print("Power law: " + array[10] + "% de chance")
-  
-  
-  #for(i in 1:length(sorted_array)){
-   # print()
-  #}   
-  #insertion_sort()
-  #tests
-  #find_best_distribution = function(px) {
-    
-    #tests <- ()
-   # max_KS_coef = 0
-    #for(i in 1:11){
-     # if(max_KS_coef < )
-      #  max_KS_coef = 
-    #}
-  #}
-  
-#}
+#Hypergeometric distribution model
+
+print(is.na(dados[,1]))
+
+normal=test_normal(dados[,1])
+log_normal=test_LogNormal(dados[,1])
+uniform=test_uniform(dados[,1])
+exponencial=test_exponencial(dados[,1])
+poisson=test_poisson(dados[,1])
+binomial=test_binomial(dados[,1])
+weibull=test_weibull(dados[,1])
+gamma=test_gamma(dados[,1])
+geometric=test_geometric(dados[,1])
+power_law=test_power_law(dados[,1])
+
+array=c(normal, log_normal, uniform, exponencial, poisson, binomial, weibull, gamma, geometric, power_law)
+print(c("Normal: ", normal, "% de chance"))
+print(c("Lognormal: "), lognormal, "% de chance")
+print(c("Uniforme: ", uniform, "% de chance"))
+print(c("Exponencial: ", exponencial, "% de chance"))
+print(c("Poisson: ", poisson, "% de chance"))
+print(c("Binomial, ", binomial, "% de chance"))
+print(c("Weibull: ", weibull, "% de chance"))
+print(c("Gamma: ", gamma, "% de chance"))
+print(c("Geometrica: ", geometric, "% de chance"))
+print(c("Power Law: ", power_law, "% de chance"))
