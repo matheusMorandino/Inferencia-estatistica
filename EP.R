@@ -24,14 +24,14 @@ KS_test = function(px, py) {
 test_normal = function(px) {
   sample_CDF = ecdf(px)
   KS_coef =  0
-  for(i in 1:100) {
+  for(i in 1:1000) {
     model_norm = rnorm(length(dados$y), mean_sample, sd_sample) 
     model_CDF = ecdf(model_norm)
     if(KS_test(sample_CDF,model_CDF) == TRUE) {
       KS_coef = KS_coef + 1
     }
   }
-  KS_coef = KS_coef/1000
+  KS_coef = KS_coef/1000 #pq esta dividindo por mil?
   
   return(KS_coef)
 }
@@ -40,7 +40,7 @@ test_normal = function(px) {
 test_LogNormal = function(px) {
   sample_CDF = ecdf(px)
   KS_coef =  0
-  for(i in 1:100) {
+  for(i in 1:1000) {
     LogNormal = rlnorm(length(dados$y), mean_sample, sd_sample)
     model_CDF = ecdf(LogNormal)
     if(KS_test(sample_CDF,model_CDF) == TRUE) {
@@ -57,7 +57,7 @@ test_LogNormal = function(px) {
 test_uniform = function(px) {
   sample_CDF = ecdf(px)
   KS_coef =  0
-  for(i in 1:100) {
+  for(i in 1:1000) {
     model_uniformDistribution = runif(length(dados$y), minimum, maximum)
     model_CDF = ecdf(model_uniformDistribution)
     if(KS_test(sample_CDF,model_CDF) == TRUE) {
@@ -73,9 +73,9 @@ test_uniform = function(px) {
 test_exp = function(px) {
   sample_CDF = ecdf(px)
   KS_coef =  0
-  for(i in 1:100) {
-    model_exponencialDistribution=rexp(length(dados$y), sd_sample) ## alterem essa parte de acordo
-    model_CDF = ecdf(model_exponencialDistribution)                ## com a distribuição, é só subistituir com o que fizemos
+  for(i in 1:1000) {
+    model_exponencialDistribution=rexp(length(dados$y), mean_sample) 
+    model_CDF = ecdf(model_exponencialDistribution)
     if(KS_test(sample_CDF,model_CDF) == TRUE) {
       KS_coef = KS_coef + 1
     }
@@ -89,7 +89,7 @@ test_exp = function(px) {
 test_poisson = function(px) {
   sample_CDF = ecdf(px)
   KS_coef =  0
-  for(i in 1:100) {
+  for(i in 1:1000) {
     model_poisson_distribution=rpois(length(dados$y), mean_sample)
     model_CDF=ecdf(model_poisson_distribution)
     if(KS_test(sample_CDF,model_CDF) == TRUE) {
@@ -102,24 +102,69 @@ test_poisson = function(px) {
 }
 
 #Binomial distribution model
-model_binomial_distribution=rbinom(dados$y, size = length(dados$y), prob = mean_sample/length(dados$y))
-CDF_binomial_distribution=ecdf(model_binomial_distribution)
-plot(CDF_binomial_distribution, col="brown", add=TRUE)
+test_binomial = function(px) {
+  sample_CDF = ecdf(px)
+  KS_coef =  0
+  for(i in 1:1000) {
+    model_binomial_distribution=rbinom(dados$y, size = length(dados$y), prob = mean_sample/length(dados$y))
+    model_CDF=ecdf(model_binomial_distribution)
+    if(KS_test(sample_CDF,model_CDF) == TRUE) {
+      KS_coef = KS_coef + 1
+    }
+  }
+  KS_coef = KS_coef/1000
+
+  return(KS_coef)
+}
 
 #Weibull distribution model
-model_weibull_distribution=rweibull(length(dados$y), shape = 1, scale = mean_sample/log(2,exp(1)))
-CDF_weibull=ecdf(model_weibull_distribution)
-plot(CDF_weibull, col= "orange", add=TRUE)
+test_weibull = function(px) {
+  sample_CDF = ecdf(px)
+  KS_coef =  0
+  for(i in 1:1000) {
+    model_weibull_distribution=rweibull(length(dados$y), shape = 1, scale = mean_sample/log(2,exp(1)))
+    model_CDF=ecdf(model_weibull_distribution)
+    if(KS_test(sample_CDF,model_CDF) == TRUE) {
+      KS_coef = KS_coef + 1
+    }
+  }
+  KS_coef = KS_coef/1000
+  
+  return(KS_coef)
+}
 
 #Gamma distribution model
-model_gamma=rgamma(length(dados$y), shape = (mean_sample^2)/(sd_sample^2), rate = mean_sample/(sd_sample^2))
-CDF_gamma=ecdf(model_gamma_distribution)
-plot(CDF_gamma_distribution, col="purple", add=TRUE)
+test_gamma = function(px) {
+  sample_CDF = ecdf(px)
+  KS_coef =  0
+  for(i in 1:1000) {
+    model_gamma=rgamma(length(dados$y), shape = (mean_sample^2)/(sd_sample^2), rate = mean_sample/(sd_sample^2))
+    model_CDF=ecdf(model_gamma_distribution)
+    if(KS_test(sample_CDF,model_CDF) == TRUE) {
+      KS_coef = KS_coef + 1
+    }
+  }
+  KS_coef = KS_coef/1000
+  
+  return(KS_coef)
+}
+
 
 #Geometric distribution model
-model_geometric=rgeom(length(dados$y), 1/mean_sample)
-CDF_geometric=ecdf(model_geometric)
-plot(CDF_geometric, col="grey", add=TRUE)
+test_geometric = function(px) {
+  sample_CDF = ecdf(px)
+  KS_coef =  0
+  for(i in 1:1000) {
+    model_geometric=rgeom(length(dados$y), 1/mean_sample)
+    model_CDF=ecdf(model_geometric)
+    if(KS_test(sample_CDF,model_CDF) == TRUE) {
+      KS_coef = KS_coef + 1
+    }
+  }
+  KS_coef = KS_coef/1000
+  
+  return(KS_coef)
+}
 
 #Power law distribution model
 ln_sum = 0
@@ -130,6 +175,31 @@ for(i in 1:length(dados$y)) {
 }
 alpha = 1 + length(dados$y)/(ln_sum)
 
-model_power_law = rpldis(length(dados$y), x_min, alpha, 0)
-CDF_power_law = ecdf(model_power_law)
-plot(CDF_power_law, col="cyan", add=TRUE)
+test_power_law = function(px) {
+  sample_CDF = ecdf(px)
+  KS_coef =  0
+  for(i in 1:1000) {
+    model_power_law = rpldis(length(dados$y), x_min, alpha, 0)
+    model_CDF=ecdf(model_power_law)
+    if(KS_test(sample_CDF,model_CDF) == TRUE) {
+      KS_coef = KS_coef + 1
+    }
+  }
+  KS_coef = KS_coef/1000
+  
+  return(KS_coef)
+  
+  #Hypergeometric distribution model
+  
+  
+  #tests
+  find_best_distribution = function(px) {
+    tests <- ()
+    max_KS_coef = 0
+    for(i in 1:11){
+      if(max_KS_coef < )
+        max_KS_coef = 
+    }
+  }
+  
+}
