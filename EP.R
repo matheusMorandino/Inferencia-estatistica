@@ -70,7 +70,7 @@ test_uniform = function(px) {
 }
 
 #Exponencial distribution model
-test_exp = function(px) {
+test_exponencial = function(px) {
   sample_CDF = ecdf(px)
   KS_coef =  0
   for(i in 1:1000) {
@@ -167,31 +167,58 @@ test_geometric = function(px) {
 }
 
 #Power law distribution model
-ln_sum = 0
-x_min = 1
-
-for(i in 1:length(dados$y)) {
-  ln_sum = log(abs(dados$y[i])/(x_min-1/2), exp(1)) + ln_sum
-}
-alpha = 1 + length(dados$y)/(ln_sum)
-
 test_power_law = function(px) {
+  ln_sum = 0
+  x_min = 1
+  
+  for(i in 1:length(px)) {
+    ln_sum = log(abs(px[i])/(x_min-1/2), exp(1)) + ln_sum
+  }
+  alpha = 1 + length(px)/(ln_sum)
+  
   sample_CDF = ecdf(px)
   KS_coef =  0
   for(i in 1:1000) {
-    model_power_law = rpldis(length(dados$y), x_min, alpha, 0)
+    model_power_law = rpldis(length(px), x_min, alpha, 0)
     model_CDF=ecdf(model_power_law)
     if(KS_test(sample_CDF,model_CDF) == TRUE) {
       KS_coef = KS_coef + 1
     }
   }
   KS_coef = KS_coef/1000
-  
   return(KS_coef)
-  
+}
   #Hypergeometric distribution model
   
+  insertion_sort=function(array){
+    for(i in 2:length(array))
+      aux=array[i]
+      j=i-1
+      while(j>0 && aux<array[j])
+        array[j+1]=array[j]
+        j=j-1
+      array[j+1]=aux
+    return(array)
+  }
+   
   
+  normal=test_normal(dados$y)
+  log_normal=test_LogNormal(dados$y)
+  uniform=test_uniform(dados$y)
+  exponencial=test_exponencial(dados$y)
+  poisson=test_poisson(dados$y)
+  binomial=test_binomial(dados$y)
+  weibull=test_weibull(dados$y)
+  gamma=test_gamma(dados$y)
+  geometric=test_geometric(dados$y)
+  power_law=test_power_law(dados$y)
+  
+  array=c(normal, log_normal, uniform, exponencial, poisson, binomial, weibull, gamma, geometric,power_law)
+  sorted_array=insertion_sort(array)
+  print(array)
+  print(sorted_array)
+    
+  insertion_sort()
   #tests
   find_best_distribution = function(px) {
     tests <- ()
@@ -203,3 +230,4 @@ test_power_law = function(px) {
   }
   
 }
+
