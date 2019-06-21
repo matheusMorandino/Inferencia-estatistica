@@ -1,6 +1,7 @@
 dados = read.csv(file.choose(), header = T, sep = ",")
 
 #Sample data colection
+sample_dados = dados$y
 CDF_sample = ecdf(dados$y)
 mean_sample = mean(dados$y)
 sd_sample = sd(dados$y)
@@ -9,19 +10,31 @@ maximum = max(dados$y)
 print(summary(dados))
 plot(CDF_sample, col="black")
 
-#Kullback-leibler function
-KL_test = function(px, py, base) {
-  sum = 0
-  for(i in minimum:maximum) {
-    sum = px(i)*log(px(i)/py(i), base) + sum
+#Kolmogorov-Smirnov function
+KS_test = function(px, py) {
+  for(i in seq(minimum, maximum, by = 0.1)) {
+    if(abs(px(i)-py(i)) > 0.05) {
+      return(FALSE)
+    }
   }
-  return(sum);
+  return(TRUE)
 }
 
 #Normal distribution model
-model_norm = rnorm(length(dados$y), mean_sample, sd_sample)
-CDF_norm = ecdf(model_norm)
-plot(CDF_norm, col="blue", add=TRUE) 
+test_normal = function(px) {
+  sample_CDF = ecdf(px)
+  KS_coef =  0
+  for(i in 1:100) {
+    model_norm = rnorm(length(dados$y), mean_sample, sd_sample)
+    model_CDF = ecdf(model_norm)
+    if(KS_test(sample_CDF,model_CDF) == TRUE) {
+      KS_coef = KS_coef + 1
+    }
+  }
+  KS_coef = KS_coef/1000
+  
+  return(KS_coef)
+}
 
 #LogNormal distribution model
 LogNormal = rlnorm(length(dados$y), mean_sample, sd_sample)
@@ -54,8 +67,8 @@ CDF_weibull=ecdf(model_weibull_distribution)
 plot(CDF_weibull, col= "orange", add=TRUE)
 
 #Gamma distribution model
-model_gamma_distribution=rgamma(length(dados$y), shape = (mean_sample^2)/(sd_sample^2), rate = mean_sample/(sd_sample^2))
-CDF_gamma_distribution=ecdf(model_gamma_distribution)
+model_gamma=rgamma(length(dados$y), shape = (mean_sample^2)/(sd_sample^2), rate = mean_sample/(sd_sample^2))
+CDF_gamma=ecdf(model_gamma_distribution)
 plot(CDF_gamma_distribution, col="purple", add=TRUE)
 
 #Geometric distribution model
@@ -75,7 +88,3 @@ alpha = 1 + length(dados$y)/(ln_sum)
 model_power_law = rpldis(length(dados$y), x_min, alpha, 0)
 CDF_power_law = ecdf(model_power_law)
 plot(CDF_power_law, col="cyan", add=TRUE)
-
-#Hypergeometric distribution model
-model_hyper=rhyper(length(dados$y), )
-
