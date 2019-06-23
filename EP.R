@@ -8,7 +8,9 @@ sd_sample = sd(as.double(dados[,1]))
 minimum = min(as.double(dados[,1]))
 maximum = max(as.double(dados[,1]))
 print(summary(dados))
-plot(CDF_sample, col="black")
+plot(sample_dados, col="blue")
+plot(CDF_sample, col="black", add=TRUE)
+hist(sample_dados, add=TRUE)
 
 print(dados[,1])
 #for (i in 1:length(dados[,1])){
@@ -16,8 +18,9 @@ print(dados[,1])
   #else print("ok")
 #}
 
-print(length(dados[,1]))
-
+#print(length(dados[,1]))
+install.packages("poweRlaw")
+library("poweRlaw")
 #Kolmogorov-Smirnov function
 KS_test = function(px, py) {
   for(i in seq(minimum, maximum, by = 0.1)) {
@@ -165,7 +168,6 @@ test_geometric = function(px) {
   for(i in 1:1000) {
     model_geometric=rgeom(length(px), 1/mean_sample)
     model_CDF=ecdf(model_geometric)
-    plot(model_CDF)
     if(KS_test(sample_CDF,model_CDF) == TRUE) {
       KS_coef = KS_coef + 1
     }
@@ -176,6 +178,36 @@ test_geometric = function(px) {
 }
 
 
+#Power law
+test=function(px){
+  px=sort(px)
+  py=c()
+  py=ecdf(px)
+  complement_py=c()
+  for(i in 1:length(py)){
+    complement_py=c(complement_py, 1-py[i])
+  }
+  
+  px=px[-length(px)]
+  complement_py=complement_py[-length(complement_py)]
+  
+  new_px=c()
+  
+  for(i in 1:length(px)){
+    new_px=c(new_px, log10(px[i]))  
+  }
+  
+  new_py=c()
+  for(i in 1:length(complement_py)){
+    new_py=c(new_py, log10(complement_py[i]))  
+  } 
+  
+  correlation=cor(new_px, new_py)
+  print(abs(as.double(correlation)))
+  
+  return(abs(as.double(correlation)))
+}
+power=test(dados[,1])
 #Power law distribution model
 #library("poweRlaw")
 test_power_law = function(px) {
@@ -202,7 +234,8 @@ test_power_law = function(px) {
 #Hypergeometric distribution model
 
 #print(is.na(dados[,1]))
-
+install.packages("devtools")
+devtools::install_github("csgillespie/poweRlaw")
 normal=test_normal(dados[,1])
 lognormal=test_LogNormal(dados[,1])
 uniform=test_uniform(dados[,1])
