@@ -2,11 +2,11 @@ dados = read.csv(file.choose(), header = T, sep = ",")
 
 #Sample data colection
 sample_dados = dados[,1]
-CDF_sample = ecdf(dados[,1])
-mean_sample = mean(dados[,1])
-sd_sample = sd(dados[,1])
-minimum = min(dados[,1])
-maximum = max(dados[,1])
+CDF_sample = ecdf(as.double(dados[,1]))
+mean_sample = mean(as.double(dados[,1]))
+sd_sample = sd(as.double(dados[,1]))
+minimum = min(as.double(dados[,1]))
+maximum = max(as.double(dados[,1]))
 print(summary(dados))
 plot(CDF_sample, col="black")
 
@@ -30,7 +30,7 @@ KS_test = function(px, py) {
 
 #Normal distribution model
 test_normal = function(px) {
-  #sample_CDF = ecdf(px)
+  sample_CDF = ecdf(px)
   KS_coef =  0
   for(i in 1:1000) {
     model_norm = rnorm(length(px), mean_sample, sd_sample) 
@@ -224,3 +224,8 @@ print(c("Weibull: ", weibull, "% de chance"))
 print(c("Gamma: ", gamma, "% de chance"))
 print(c("Geometrica: ", geometric, "% de chance"))
 print(c("Power Law: ", power_law, "% de chance"))
+print(as.double(weibull))
+print(2)
+a=2
+print(a)
+
