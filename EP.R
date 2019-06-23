@@ -13,14 +13,7 @@ plot(CDF_sample, col="black", add=TRUE)
 hist(sample_dados, add=TRUE)
 
 print(dados[,1])
-#for (i in 1:length(dados[,1])){
- # if(is.na(i)) print("Is null")
-  #else print("ok")
-#}
 
-#print(length(dados[,1]))
-install.packages("poweRlaw")
-library("poweRlaw")
 #Kolmogorov-Smirnov function
 KS_test = function(px, py) {
   for(i in seq(minimum, maximum, by = 0.1)) {
@@ -42,7 +35,7 @@ test_normal = function(px) {
       KS_coef = KS_coef + 1
     }
   }
-  KS_coef = KS_coef/1000 #pq esta dividindo por mil?
+  KS_coef = KS_coef/1000
   
   return(KS_coef)
 }
@@ -179,63 +172,19 @@ test_geometric = function(px) {
 
 
 #Power law
-test=function(px){
-  px=sort(px)
-  py=c()
-  py=ecdf(px)
-  complement_py=c()
-  for(i in 1:length(py)){
-    complement_py=c(complement_py, 1-py[i])
-  }
+test_power_law=function(px){
+  sorted_px=sort(px)
+  complement=1-ecdf(sorted_px)(sort(px))
+  sorted_px=sorted_px[1:length(sorted_px)-1]
+  complement=complement[1:length(complement)-1]
   
-  px=px[-length(px)]
-  complement_py=complement_py[-length(complement_py)]
+  x=log(sorted_px, 10)
+  y=log(complement, 10)
+  correlation=as.double(abs(cor(x,y)))
   
-  new_px=c()
-  
-  for(i in 1:length(px)){
-    new_px=c(new_px, log10(px[i]))  
-  }
-  
-  new_py=c()
-  for(i in 1:length(complement_py)){
-    new_py=c(new_py, log10(complement_py[i]))  
-  } 
-  
-  correlation=cor(new_px, new_py)
-  print(abs(as.double(correlation)))
-  
-  return(abs(as.double(correlation)))
+  return (correlation)
 }
-power=test(dados[,1])
-#Power law distribution model
-#library("poweRlaw")
-test_power_law = function(px) {
-  ln_sum = 0
-  x_min = 1
-  
-  for(i in 1:length(px)) {
-    ln_sum = log(abs(as.double(px[i]))/(x_min-1/2), exp(1)) + ln_sum
-  }
-  alpha = 1 + length(px)/(ln_sum)
-  
-  sample_CDF = ecdf(px)
-  KS_coef =  0
-  for(i in 1:1000) {
-    model_power_law = rpldis(length(px), x_min, alpha, 0)
-    model_CDF=ecdf(model_power_law)
-    if(KS_test(sample_CDF,model_CDF) == TRUE) {
-      KS_coef = KS_coef + 1
-    }
-  }
-  KS_coef = KS_coef/1000
-  return(KS_coef)
-}
-#Hypergeometric distribution model
 
-#print(is.na(dados[,1]))
-install.packages("devtools")
-devtools::install_github("csgillespie/poweRlaw")
 normal=test_normal(dados[,1])
 lognormal=test_LogNormal(dados[,1])
 uniform=test_uniform(dados[,1])
@@ -246,8 +195,6 @@ weibull=test_weibull(dados[,1])
 gamma=test_gamma(dados[,1])
 geometric=test_geometric(dados[,1])
 power_law=test_power_law(dados[,1])
-
-array=c(normal, lognormal, uniform, exponencial, poisson, binomial, weibull, gamma, geometric, power_law)
 print(c("Normal: ", 100*normal, "% de chance"))
 print(c("Lognormal: ", 100*lognormal, "% de chance"))
 print(c("Uniforme: ", 100*uniform, "% de chance"))
