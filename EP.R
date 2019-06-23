@@ -1,7 +1,7 @@
 dados = read.csv(file.choose(), header = T, sep = ",")
 
 #Sample data colection
-sample_dados = dados[,1]
+sample_dados = as.double(dados[,1])
 CDF_sample = ecdf(as.double(dados[,1]))
 mean_sample = mean(as.double(dados[,1]))
 sd_sample = sd(as.double(dados[,1]))
@@ -11,17 +11,17 @@ print(summary(dados))
 plot(CDF_sample, col="black")
 
 print(dados[,1])
-for (i in 1:length(dados[,1])){
-  if(is.na(i)) print("Is null")
-  else print("ok")
-}
+#for (i in 1:length(dados[,1])){
+ # if(is.na(i)) print("Is null")
+  #else print("ok")
+#}
 
 print(length(dados[,1]))
 
 #Kolmogorov-Smirnov function
 KS_test = function(px, py) {
   for(i in seq(minimum, maximum, by = 0.1)) {
-    if(abs(px(i)-py(i)) > 0.05) {
+    if(abs(as.double(px(i))-as.double(py(i))) > 0.05) {
       return(FALSE)
     }
   }
@@ -177,12 +177,13 @@ test_geometric = function(px) {
 
 
 #Power law distribution model
+#library("poweRlaw")
 test_power_law = function(px) {
   ln_sum = 0
   x_min = 1
   
   for(i in 1:length(px)) {
-    ln_sum = log(abs(px[i])/(x_min-1/2), exp(1)) + ln_sum
+    ln_sum = log(abs(as.double(px[i]))/(x_min-1/2), exp(1)) + ln_sum
   }
   alpha = 1 + length(px)/(ln_sum)
   
@@ -200,10 +201,10 @@ test_power_law = function(px) {
 }
 #Hypergeometric distribution model
 
-print(is.na(dados[,1]))
+#print(is.na(dados[,1]))
 
 normal=test_normal(dados[,1])
-log_normal=test_LogNormal(dados[,1])
+lognormal=test_LogNormal(dados[,1])
 uniform=test_uniform(dados[,1])
 exponencial=test_exponencial(dados[,1])
 poisson=test_poisson(dados[,1])
@@ -213,19 +214,14 @@ gamma=test_gamma(dados[,1])
 geometric=test_geometric(dados[,1])
 power_law=test_power_law(dados[,1])
 
-array=c(normal, log_normal, uniform, exponencial, poisson, binomial, weibull, gamma, geometric, power_law)
-print(c("Normal: ", normal, "% de chance"))
-print(c("Lognormal: "), lognormal, "% de chance")
-print(c("Uniforme: ", uniform, "% de chance"))
-print(c("Exponencial: ", exponencial, "% de chance"))
-print(c("Poisson: ", poisson, "% de chance"))
-print(c("Binomial, ", binomial, "% de chance"))
-print(c("Weibull: ", weibull, "% de chance"))
-print(c("Gamma: ", gamma, "% de chance"))
-print(c("Geometrica: ", geometric, "% de chance"))
-print(c("Power Law: ", power_law, "% de chance"))
-print(as.double(weibull))
-print(2)
-a=2
-print(a)
-
+array=c(normal, lognormal, uniform, exponencial, poisson, binomial, weibull, gamma, geometric, power_law)
+print(c("Normal: ", 100*normal, "% de chance"))
+print(c("Lognormal: ", 100*lognormal, "% de chance"))
+print(c("Uniforme: ", 100*uniform, "% de chance"))
+print(c("Exponencial: ", 100*exponencial, "% de chance"))
+print(c("Poisson: ", 100*poisson, "% de chance"))
+print(c("Binomial, ", 100*binomial, "% de chance"))
+print(c("Weibull: ", 100*weibull, "% de chance"))
+print(c("Gamma: ", 100*gamma, "% de chance"))
+print(c("Geometrica: ", 100*geometric, "% de chance"))
+print(c("Power Law: ", 100*power_law, "% de chance"))
