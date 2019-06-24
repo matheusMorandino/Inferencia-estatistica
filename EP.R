@@ -7,12 +7,10 @@ mean_sample = mean(as.double(dados[,1]))
 sd_sample = sd(as.double(dados[,1]))
 minimum = min(as.double(dados[,1]))
 maximum = max(as.double(dados[,1]))
-print(summary(dados))
+print(summary(dados[,1]))
 plot(sample_dados, col="blue")
 plot(CDF_sample, col="black", add=TRUE)
 hist(sample_dados, add=TRUE)
-
-print(dados[,1])
 
 #Kolmogorov-Smirnov function
 KS_test = function(px, py) {
@@ -178,7 +176,7 @@ test_power_law=function(px){
   sorted_px=sorted_px[1:length(sorted_px)-1]
   complement=complement[1:length(complement)-1]
   
-  x=log(sorted_px, 10)
+  x=log(as.double(sorted_px), 10)
   y=log(complement, 10)
   correlation=as.double(abs(cor(x,y)))
   
